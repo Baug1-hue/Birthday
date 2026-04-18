@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&amp;family=Quicksand:wght@300;400;500&amp;display=swap" rel="stylesheet">
+  <style>
+html, body { height: 100%; margin: 0; overflow: hidden; }
+* { box-sizing: border-box; }
+
+:root {
+  --bg: #0a1628;
+  --surface: #1a2a4a;
+  --text: #e8dcc8;
+  --primary: #7eb8da;
+  --secondary: #c4956a;
+}
+
+body {
+  font-family: 'Quicksand', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.scene { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; padding: 20px; overflow-y: auto; }
+.scene.active { opacity: 1; pointer-events: auto; }
+
+/* Particles */
+.particle {
+  position: absolute; width: 4px; height: 4px; border-radius: 50%;
+  background: var(--primary); opacity: 0;
+  animation: floatUp 6s infinite ease-in-out;
+}
+@keyframes floatUp {
+  0% { opacity: 0; transform: translateY(40px) scale(0); }
+  20% { opacity: 0.8; }
+  80% { opacity: 0.3; }
+  100% { opacity: 0; transform: translateY(-200px) scale(1.2); }
+}
+
+.sparkle {
+  position: absolute; width: 3px; height: 3px; border-radius: 50%;
+  background: var(--secondary); opacity: 0;
+  animation: sparkleAnim 3s infinite;
+}
+@keyframes sparkleAnim {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1.5); }
+}
+
+/* Text animations */
+.fade-in-up {
+  opacity: 0; transform: translateY(30px);
+  animation: fadeInUp 1.5s forwards;
+}
+@keyframes fadeInUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-slow {
+  opacity: 0; animation: fadeInSlow 2s forwards;
+}
+@keyframes fadeInSlow {
+  to { opacity: 1; }
+}
+
+/* Cake */
+.cake-container { position: relative; }
+.cake-base {
+  width: 160px; height: 90px; background: linear-gradient(135deg, #f4d7c8, #e8b89d);
+  border-radius: 12px 12px 20px 20px; position: relative; margin-top: 20px;
+  box-shadow: 0 8px 30px rgba(200,150,100,0.3);
+}
+.cake-top {
+  width: 170px; height: 20px; background: linear-gradient(135deg, var(--primary), #a8d4ee);
+  border-radius: 10px; position: absolute; top: -8px; left: -5px;
+}
+.cake-middle {
+  width: 160px; height: 8px; background: var(--secondary);
+  position: absolute; top: 35px; left: 0; opacity: 0.6;
+}
+.cake-stripe {
+  width: 160px; height: 5px; background: rgba(255,255,255,0.2);
+  position: absolute; top: 60px; left: 0;
+}
+.candle {
+  width: 6px; height: 35px; background: linear-gradient(to top, #f5e6a3, #f0d080);
+  position: absolute; top: -42px; border-radius: 2px;
+}
+.candle:nth-child(1) { left: 30px; }
+.candle:nth-child(2) { left: 55px; }
+.candle:nth-child(3) { left: 80px; }
+.candle:nth-child(4) { left: 105px; }
+.candle:nth-child(5) { left: 130px; }
+.flame {
+  width: 10px; height: 16px; background: radial-gradient(ellipse, #ffe066 20%, #ff9933 60%, transparent 100%);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  position: absolute; top: -18px; left: -2px;
+  animation: flicker 0.8s infinite alternate;
+  transition: opacity 1s ease, transform 1s ease;
+}
+.flame.out { opacity: 0; transform: scale(0) translateY(-10px); }
+.flame-glow {
+  width: 30px; height: 30px; background: radial-gradient(circle, rgba(255,220,100,0.4), transparent);
+  border-radius: 50%; position: absolute; top: -28px; left: -12px;
+  transition: opacity 1s ease;
+}
+.flame-glow.out { opacity: 0; }
+@keyframes flicker {
+  0% { transform: scaleY(1) scaleX(1) rotate(-2deg); }
+  50% { transform: scaleY(1.1) scaleX(0.9) rotate(2deg); }
+  100% { transform: scaleY(0.95) scaleX(1.05) rotate(-1deg); }
+}
+
+/* Jar */
+.jar {
+  width: 140px; height: 170px; position: relative;
+  background: linear-gradient(135deg, rgba(126,184,218,0.25), rgba(196,149,106,0.15));
+  border: 2.5px solid rgba(126,184,218,0.5);
+  border-radius: 14px 14px 20px 20px;
+  box-shadow: 0 0 80px rgba(126,184,218,0.35), inset 0 0 50px rgba(126,184,218,0.15), 0 20px 60px rgba(0,0,0,0.3), inset -2px -2px 20px rgba(255,255,255,0.08);
+  overflow: hidden;
+  animation: jarGlow 3s ease-in-out infinite;
+}
+@keyframes jarGlow {
+  0%, 100% { box-shadow: 0 0 80px rgba(126,184,218,0.35), inset 0 0 50px rgba(126,184,218,0.15), 0 20px 60px rgba(0,0,0,0.3), inset -2px -2px 20px rgba(255,255,255,0.08); }
+  50% { box-shadow: 0 0 120px rgba(126,184,218,0.5), inset 0 0 70px rgba(126,184,218,0.25), 0 20px 60px rgba(0,0,0,0.3), inset -2px -2px 20px rgba(255,255,255,0.12); }
+}
+.jar-lid {
+  width: 152px; height: 26px; background: linear-gradient(to bottom, #d4a574, #c4956a);
+  border-radius: 8px 8px 0 0; margin: 0 auto -2px;
+  box-shadow: 0 -3px 15px rgba(196,149,106,0.4), inset 0 2px 8px rgba(255,255,255,0.1);
+}
+.jar-note {
+  width: 20px; height: 24px; border-radius: 1px; position: absolute;
+  background: linear-gradient(135deg, #f5e6d3, #e8d4ba);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  animation: jarFloat 5s infinite ease-in-out;
+  border: 0.5px solid rgba(196,149,106,0.3);
+}
+.jar-note:before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: rgba(196,149,106,0.2);
+  top: 8px;
+  left: 0;
+}
+@keyframes jarFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(6deg); }
+}
+
+/* Message card */
+.msg-card {
+  max-width: 420px; width: 100%; padding: 40px 36px;
+  background: linear-gradient(135deg, rgba(26,42,74,0.98), rgba(26,42,74,0.85));
+  border: 1.5px solid rgba(126,184,218,0.25);
+  border-radius: 20px;
+  box-shadow: 0 15px 50px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+  text-align: center;
+  animation: unfoldPaper 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transform-origin: center;
+  backdrop-filter: blur(10px);
+}
+@keyframes unfoldPaper {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.85) rotateX(90deg);
+  }
+  50% {
+    transform: scale(1.02) rotateX(0deg);
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1) rotateX(0deg);
+  }
+}
+
+.msg-blur-bg {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(3px); opacity: 0; pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+.msg-blur-bg.active {
+  opacity: 1; pointer-events: auto;
+}
+
+.background-glow {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+}
+.glow-particle {
+  position: absolute; border-radius: 50%;
+  background: radial-gradient(circle, rgba(126,184,218,0.2), transparent);
+  animation: glowFloat 8s infinite ease-in-out;
+}
+@keyframes glowFloat {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 0.8; transform: translateY(-40px); }
+}
+
+/* Btn */
+.magic-btn {
+  padding: 14px 36px; border: 1px solid rgba(126,184,218,0.4);
+  background: linear-gradient(135deg, rgba(126,184,218,0.15), rgba(126,184,218,0.05));
+  color: var(--primary); border-radius: 50px; cursor: pointer;
+  font-family: 'Quicksand', sans-serif; font-size: 15px; font-weight: 500;
+  transition: all 0.4s ease; letter-spacing: 0.5px;
+}
+.magic-btn:hover {
+  background: linear-gradient(135deg, rgba(126,184,218,0.25), rgba(126,184,218,0.1));
+  box-shadow: 0 0 25px rgba(126,184,218,0.2);
+  transform: translateY(-2px);
+}
+
+/* Scene darkening */
+.darken-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0);
+  transition: background 2s ease; pointer-events: none;
+}
+.darken-overlay.dark { background: rgba(0,0,0,0.45); }
+
+/* Wind lines */
+.wind-line {
+  position: absolute; height: 2px; border-radius: 2px;
+  background: linear-gradient(to right, transparent, rgba(126,184,218,0.4), transparent);
+  animation: windBlow 0.8s ease-out forwards; opacity: 0;
+}
+@keyframes windBlow {
+  0% { opacity: 0; transform: translateX(-40px) scaleX(0.3); }
+  40% { opacity: 0.7; }
+  100% { opacity: 0; transform: translateX(80px) scaleX(1.5); }
+}
+
+/* Counter */
+.msg-counter {
+  font-size: 13px; color: var(--secondary); opacity: 0.7;
+  font-family: 'Quicksand', sans-serif; margin-bottom: 12px;
+}
+
+/* Final scene glow */
+.final-glow {
+  position: absolute; width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(126,184,218,0.12), transparent 70%);
+  border-radius: 50%; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulseGlow 4s infinite ease-in-out;
+}
+@keyframes pulseGlow {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+  50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+}
+
+.final-text {
+  max-width: 500px; text-align: center; line-height: 2;
+  font-family: 'Cormorant Garamond', serif; font-size: 18px;
+  font-weight: 300; font-style: italic; color: var(--text);
+}
+.final-text p { margin-bottom: 18px; opacity: 0; animation: fadeInUp 1.2s forwards; }
+
+/* Scroll hint */
+.scroll-hint { animation: bob 2s infinite ease-in-out; }
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="app" style="position:relative; width:100%; height:100%; overflow:hidden; background:var(--bg);">
+   <div id="bgGlow" class="background-glow"></div>
+   <div id="msgBlurBg" class="msg-blur-bg"></div><!-- SCENE 1: Intro -->
+   <div id="scene1" class="scene active">
+    <div id="particles1" style="position:absolute;inset:0;overflow:hidden;pointer-events:none;"></div>
+    <div style="text-align:center; z-index:2;">
+     <p id="intro1" class="fade-in-up" style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:300; font-style:italic; opacity:0; color:var(--text); letter-spacing:1px;">It's your birthday today…</p>
+     <h1 id="intro2" style="font-family:'Cormorant Garamond',serif; font-size:38px; font-weight:600; margin-top:24px; opacity:0; color:var(--primary); letter-spacing:1.5px;">Happy Birthday <span id="nameDisplay">My Love</span> 💙</h1>
+     <div id="introBtn" style="margin-top:50px; opacity:0;"><button class="magic-btn" onclick="goToScene(2)">Continue ✨</button>
+     </div>
+    </div>
+   </div><!-- SCENE 2: Cake -->
+   <div id="scene2" class="scene">
+    <div class="darken-overlay" id="darkenOverlay"></div>
+    <div style="z-index:2; text-align:center;">
+     <div class="cake-container" style="display:inline-block; position:relative;">
+      <div class="cake-base">
+       <div class="cake-top"></div>
+       <div class="cake-middle"></div>
+       <div class="cake-stripe"></div>
+       <div class="candle" style="left:30px;">
+        <div class="flame" id="f1"></div>
+        <div class="flame-glow" id="fg1"></div>
+       </div>
+       <div class="candle" style="left:55px;">
+        <div class="flame" id="f2"></div>
+        <div class="flame-glow" id="fg2"></div>
+       </div>
+       <div class="candle" style="left:80px;">
+        <div class="flame" id="f3"></div>
+        <div class="flame-glow" id="fg3"></div>
+       </div>
+       <div class="candle" style="left:105px;">
+        <div class="flame" id="f4"></div>
+        <div class="flame-glow" id="fg4"></div>
+       </div>
+       <div class="candle" style="left:130px;">
+        <div class="flame" id="f5"></div>
+        <div class="flame-glow" id="fg5"></div>
+       </div>
+      </div>
+     </div>
+     <div id="wishText" style="margin-top:40px; opacity:0; transition: opacity 1.5s ease;">
+      <p style="font-family:'Cormorant Garamond',serif; font-size:24px; font-style:italic; color:var(--text);">Make a wish…</p>
+      <p style="font-family:'Quicksand',sans-serif; font-size:15px; color:var(--secondary); margin-top:8px; opacity:0.7;">Blow the candles…</p><button class="magic-btn" style="margin-top:24px;" onclick="blowCandles()">I blew them 💨</button>
+     </div>
+    </div>
+   </div><!-- SCENE 3: Blow Effect -->
+   <div id="scene3" class="scene">
+    <div id="windContainer" style="position:absolute;inset:0;overflow:hidden;pointer-events:none;"></div>
+    <div style="z-index:2; text-align:center;">
+     <p class="fade-in-up" style="font-family:'Cormorant Garamond',serif; font-size:26px; font-style:italic; color:var(--primary);">Your wish is safe… 💫</p>
+     <div style="margin-top:40px; opacity:0; animation: fadeInSlow 2s 1.5s forwards;"><button class="magic-btn" onclick="goToScene(4)">Continue</button>
+     </div>
+    </div>
+   </div><!-- SCENE 4: Jar Reveal -->
+   <div id="scene4" class="scene">
+    <div style="z-index:2; text-align:center;">
+     <div style="display:inline-block;">
+      <div class="jar-lid"></div>
+      <div class="jar" id="jarBody"></div>
+     </div>
+     <p style="font-family:'Cormorant Garamond',serif; font-size:22px; font-style:italic; margin-top:24px; color:var(--text);">A jar full of <span style="color:var(--primary);">24 messages</span>… just for you</p><button class="magic-btn" style="margin-top:24px;" onclick="goToScene(5)">Open the jar 🫙</button>
+    </div>
+   </div><!-- SCENE 5: Messages -->
+   <div id="scene5" class="scene">
+    <div style="z-index:2; text-align:center; width:100%; max-width:420px;">
+     <div class="msg-counter" id="msgCounter">
+      1 / 24
+     </div>
+     <div class="msg-card" id="msgCard">
+      <p id="msgText" style="font-family:'Cormorant Garamond',serif; font-size:20px; font-style:italic; line-height:1.7; color:var(--text);"></p>
+     </div><button class="magic-btn" style="margin-top:28px;" id="nextMsgBtn" onclick="nextMessage()">Next message 💌</button>
+    </div>
+   </div><!-- SCENE 6: Final -->
+   <div id="scene6" class="scene">
+    <div class="final-glow"></div>
+    <div style="z-index:2;" class="final-text" id="finalTextArea"></div>
+   </div>
+  </div>
+  <script>
+const defaultConfig = {
+  love_name: 'My Love',
+  final_message: '',
+  background_color: '#0a1628',
+  surface_color: '#1a2a4a',
+  text_color: '#e8dcc8',
+  primary_color: '#7eb8da',
+  secondary_color: '#c4956a',
+  font_family: 'Cormorant Garamond',
+  font_size: 18
+};
+
+const messages = [
+  "Happy Birthday to the most special person in my life. Today is all about you 💙",
+  "I'm really grateful you exist in my world. You make life softer and brighter.",
+  "You deserve all the happiness in this world and even more.",
+  "Every day with you in my thoughts feels a little better than the last.",
+  "I hope this new year brings you peace, success, and endless smiles.",
+  "You are stronger than you think, and more capable than you believe.",
+  "I admire the way you keep going even when things are hard.",
+  "Never forget how much potential you carry inside you.",
+  "I truly believe your future will be full of beautiful things.",
+  "Keep going… even small steps are still progress.",
+  "Today is your day, so enjoy every second of it.",
+  "I hope you feel loved, appreciated, and celebrated today.",
+  "Happy Birthday… you are truly one of a kind.",
+  "I hope this year gives you everything you've been quietly wishing for.",
+  "May your smile stay as bright as it makes me feel.",
+  "I still remember the little moments that made me smile because of you.",
+  "You make ordinary days feel special without even trying.",
+  "I like how everything feels calmer when you're around.",
+  "Even silence with you feels comfortable and safe.",
+  "Some people just feel like home… and you are one of them.",
+  "I hope you never stop believing in yourself the way I believe in you.",
+  "You taught me that kindness is the most beautiful thing a person can carry.",
+  "Here's to another year of you being amazing 🥂",
+  "This last note carries all the words I couldn't fit into the others… 💙"
+];
+
+let currentScene = 1;
+let currentMsg = 0;
+let audioCtx = null;
+let backgroundOscillators = [];
+
+// Audio
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  playBackgroundAmbience();
+}
+
+function playBackgroundAmbience() {
+  if (!audioCtx) return;
+  
+  // Soft ambient pad with evolving harmonies
+  const now = audioCtx.currentTime;
+  
+  // Base frequencies for ambient pad
+  const baseFreqs = [130.81, 164.81, 196.00]; // C3, E3, G3 chord
+  
+  baseFreqs.forEach((freq, idx) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    
+    // Smooth fade in and continuous play with gentle modulation
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.05, now + 2);
+    
+    // Gentle volume fluctuation for ambient feel
+    const lfo = audioCtx.createOscillator();
+    const lfoGain = audioCtx.createGain();
+    lfo.type = 'sine';
+    lfo.frequency.value = 0.3 + (idx * 0.1); // Different rates for each note
+    lfoGain.gain.value = 0.02;
+    
+    lfo.connect(lfoGain);
+    lfoGain.connect(gain.gain);
+    
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    
+    osc.start(now);
+    lfo.start(now);
+    
+    backgroundOscillators.push({ osc, gain, lfo });
+  });
+}
+
+function playMelody() {
+  if (!audioCtx) return;
+  // Happy Birthday melody
+  const notes = [
+    { freq: 261.63, dur: 0.5 },  // C
+    { freq: 261.63, dur: 0.5 },  // C
+    { freq: 293.66, dur: 1.0 },  // D
+    { freq: 261.63, dur: 1.0 },  // C
+    { freq: 349.23, dur: 1.0 },  // F
+    { freq: 329.63, dur: 2.0 },  // E
+    { freq: 261.63, dur: 0.5 },  // C
+    { freq: 261.63, dur: 0.5 },  // C
+    { freq: 293.66, dur: 1.0 },  // D
+    { freq: 261.63, dur: 1.0 },  // C
+    { freq: 392.00, dur: 1.0 },  // G
+    { freq: 349.23, dur: 2.0 },  // F
+  ];
+  
+  let time = audioCtx.currentTime;
+  notes.forEach((note) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = note.freq;
+    
+    gain.gain.setValueAtTime(0, time);
+    gain.gain.linearRampToValueAtTime(0.12, time + 0.05);
+    gain.gain.linearRampToValueAtTime(0, time + note.dur - 0.05);
+    
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(time);
+    osc.stop(time + note.dur);
+    
+    time += note.dur;
+  });
+}
+
+// Particles
+function createParticles(container, count) {
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = Math.random() > 0.5 ? 'particle' : 'sparkle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.top = Math.random() * 100 + '%';
+    p.style.animationDelay = Math.random() * 6 + 's';
+    p.style.animationDuration = (3 + Math.random() * 4) + 's';
+    container.appendChild(p);
+  }
+}
+
+// Jar notes
+function fillJar() {
+  const jar = document.getElementById('jarBody');
+  const colors = ['rgba(126,184,218,0.5)', 'rgba(196,149,106,0.5)', 'rgba(232,220,200,0.4)', 'rgba(126,184,218,0.3)'];
+  for (let i = 0; i < 20; i++) {
+    const n = document.createElement('div');
+    n.className = 'jar-note';
+    n.style.background = colors[i % colors.length];
+    n.style.left = (10 + Math.random() * 100) + 'px';
+    n.style.top = (30 + Math.random() * 120) + 'px';
+    n.style.animationDelay = (Math.random() * 3) + 's';
+    n.style.transform = 'rotate(' + (Math.random() * 30 - 15) + 'deg)';
+    jar.appendChild(n);
+  }
+}
+
+// Scene transitions
+function goToScene(num) {
+  if (num === 2) {
+    initAudio();
+    // Play Happy Birthday melody over the background ambience
+    setTimeout(() => playMelody(), 1000);
+  }
+  const prev = document.getElementById('scene' + currentScene);
+  const next = document.getElementById('scene' + num);
+  prev.classList.remove('active');
+  next.classList.add('active');
+  currentScene = num;
+
+  if (num === 2) {
+    setTimeout(() => {
+      document.getElementById('darkenOverlay').classList.add('dark');
+    }, 2000);
+    setTimeout(() => {
+      document.getElementById('wishText').style.opacity = '1';
+    }, 3000);
+  }
+  if (num === 5) {
+    currentMsg = 0;
+    showMessage(0);
+  }
+  if (num === 6) showFinal();
+}
+
+function blowCandles() {
+  for (let i = 1; i <= 5; i++) {
+    setTimeout(() => {
+      document.getElementById('f' + i).classList.add('out');
+      document.getElementById('fg' + i).classList.add('out');
+    }, i * 200);
+  }
+  // Wind lines
+  const wc = document.getElementById('windContainer');
+  for (let i = 0; i < 8; i++) {
+    const w = document.createElement('div');
+    w.className = 'wind-line';
+    w.style.width = (40 + Math.random() * 60) + 'px';
+    w.style.top = (35 + Math.random() * 30) + '%';
+    w.style.left = (20 + Math.random() * 30) + '%';
+    w.style.animationDelay = (i * 0.1) + 's';
+    wc.appendChild(w);
+  }
+  setTimeout(() => goToScene(3), 1800);
+}
+
+function showMessage(idx) {
+  document.getElementById('msgCounter').textContent = (idx + 1) + ' / 24';
+  const card = document.getElementById('msgCard');
+  card.style.animation = 'none';
+  card.offsetHeight; // reflow
+  card.style.animation = 'unfoldPaper 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
+  document.getElementById('msgText').textContent = messages[idx];
+  const nextBtn = document.getElementById('nextMsgBtn');
+  if (idx >= 23) {
+    nextBtn.textContent = 'Read final message 💙';
+  } else {
+    nextBtn.textContent = 'Next message 💌';
+  }
+}
+
+function nextMessage() {
+  currentMsg++;
+  if (currentMsg >= 24) {
+    goToScene(6);
+    return;
+  }
+  showMessage(currentMsg);
+}
+
+function showFinal() {
+  const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
+  const name = config.love_name || defaultConfig.love_name;
+  const custom = config.final_message || '';
+
+  const lines = custom ? [custom] : [
+    `Happy Birthday ${name}…`,
+    "I don't know how to explain everything you mean to me in simple words, but I hope you feel it in every message you just read.",
+    "You are not just part of my life… you are the reason many days feel lighter, softer, and worth smiling for.",
+    "I am grateful for you, for your presence, and for every moment that made me realize how special you are.",
+    "I wish you a year full of peace, success, and everything your heart quietly wishes for.",
+    "And no matter where life takes us… you will always hold a special place in my heart. 💙"
+  ];
+
+  const area = document.getElementById('finalTextArea');
+  area.innerHTML = '';
+  lines.forEach((line, i) => {
+    const p = document.createElement('p');
+    p.textContent = line;
+    p.style.animationDelay = (i * 1.2) + 's';
+    area.appendChild(p);
+  });
+}
+
+// Init
+createParticles(document.getElementById('particles1'), 40);
+fillJar();
+
+// Background glow particles
+const bgGlow = document.getElementById('bgGlow');
+for (let i = 0; i < 6; i++) {
+  const gp = document.createElement('div');
+  gp.className = 'glow-particle';
+  gp.style.width = (60 + Math.random() * 80) + 'px';
+  gp.style.height = gp.style.width;
+  gp.style.left = Math.random() * 100 + '%';
+  gp.style.top = Math.random() * 100 + '%';
+  gp.style.animationDelay = (Math.random() * 4) + 's';
+  gp.style.animationDuration = (8 + Math.random() * 6) + 's';
+  bgGlow.appendChild(gp);
+}
+
+// Scene 1 timing
+setTimeout(() => { document.getElementById('intro1').style.opacity = '1'; }, 300);
+setTimeout(() => {
+  const h1 = document.getElementById('intro2');
+  h1.style.opacity = '1';
+  h1.style.transition = 'opacity 2s ease';
+}, 2000);
+setTimeout(() => {
+  const btn = document.getElementById('introBtn');
+  btn.style.opacity = '1';
+  btn.style.transition = 'opacity 1.5s ease';
+}, 4000);
+
+// Element SDK
+function applyConfig(config) {
+  const name = config.love_name || defaultConfig.love_name;
+  const primary = config.primary_color || defaultConfig.primary_color;
+  const secondary = config.secondary_color || defaultConfig.secondary_color;
+  const bg = config.background_color || defaultConfig.background_color;
+  const surface = config.surface_color || defaultConfig.surface_color;
+  const textC = config.text_color || defaultConfig.text_color;
+  const font = config.font_family || defaultConfig.font_family;
+  const size = config.font_size || defaultConfig.font_size;
+
+  document.documentElement.style.setProperty('--bg', bg);
+  document.documentElement.style.setProperty('--surface', surface);
+  document.documentElement.style.setProperty('--text', textC);
+  document.documentElement.style.setProperty('--primary', primary);
+  document.documentElement.style.setProperty('--secondary', secondary);
+
+  document.getElementById('app').style.background = bg;
+  const nameEl = document.getElementById('nameDisplay');
+  if (nameEl) nameEl.textContent = name;
+
+  document.querySelectorAll('.msg-card').forEach(el => {
+    el.style.background = `linear-gradient(135deg, ${surface}f2, ${surface}cc)`;
+    el.style.borderColor = primary + '33';
+  });
+
+  // Font
+  const stack = `${font}, 'Quicksand', sans-serif`;
+  document.querySelectorAll('[style*="font-family"]').forEach(el => {
+    if (el.style.fontFamily.includes('Cormorant')) {
+      el.style.fontFamily = `${font}, serif`;
+    }
+  });
+  document.getElementById('intro1').style.fontFamily = `${font}, serif`;
+  document.getElementById('intro2').style.fontFamily = `${font}, serif`;
+  document.getElementById('intro2').style.fontSize = `${size * 2.1}px`;
+  document.getElementById('intro1').style.fontSize = `${size * 1.2}px`;
+  document.getElementById('msgText').style.fontSize = `${size * 1.1}px`;
+}
+
+window.elementSdk.init({
+  defaultConfig,
+  onConfigChange: async (config) => { applyConfig(config); },
+  mapToCapabilities: (config) => ({
+    recolorables: [
+      { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+      { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+      { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+      { get: () => config.primary_color || defaultConfig.primary_color, set: (v) => { config.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); } },
+      { get: () => config.secondary_color || defaultConfig.secondary_color, set: (v) => { config.secondary_color = v; window.elementSdk.setConfig({ secondary_color: v }); } }
+    ],
+    borderables: [],
+    fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+    fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
+  }),
+  mapToEditPanelValues: (config) => new Map([
+    ['love_name', config.love_name || defaultConfig.love_name],
+    ['final_message', config.final_message || defaultConfig.final_message]
+  ])
+});
+
+lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ee60477e58ab32a',t:'MTc3NjUzOTkyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
